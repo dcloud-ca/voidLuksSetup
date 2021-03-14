@@ -1,2 +1,2 @@
-# void_linux_LUKS_install
+# voidLuksSetup
 Bash script for installing Void Linux with disk encryption

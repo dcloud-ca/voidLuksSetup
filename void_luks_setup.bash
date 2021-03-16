@@ -183,3 +183,4 @@ sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
 
 
 ## services running on live image: NetworkManager acpid dbus elogind lxdm polkitd rtkit sshd udevd uuidd
+## default user groups when using void-installer: wheel floppy cdrom optical audio video kvm xbuilder

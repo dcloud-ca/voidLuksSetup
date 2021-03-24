@@ -1,47 +1,42 @@
 #!/bin/bash
-efi_part_size="260M"
-root_part_size="20G"
-swap_size="4G"
-luks_pw=""
-luks_pw_check="temp"
-root_pw=""
-root_pw_check="temp"
-username=""
-user_pw=""
-user_pw_check="temp"
-hostname="voidLinux"
-fs_type="ext4"
-libc="musl" #"musl" for musl, "" for glibc
+
+efi_part_size="260M"		#Minimum of 100M, Arch wiki recommends at least 260M (as of 24-Mar-2021)
+root_part_size="20G"		#Size of the root partition. Required size depends on how much software you ultimately install, but Arch wiki recommends 15-20G (as of 24-Mar-2021)
+swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM.
+				#Otherwise, equal to square root of RAM (rounded up), or at least 2G
+username=""			#Desired username for regular (non-root) user of the Void installation you're making
+hostname="voidLinux"		#Desired name to be used for the hostname of the Void installation as well as the volume group name
+fs_type="ext4"			#Desired filesystem to be used for the root and home partitions
+libc="musl" 			#"musl" for musl, "" for glibc
 language="en_US.UTF-8"
-apps="nano elogind dbus NetworkManager polkit  rtkit"
-graphical_de="xfce4"
+vendor_cpu="intel"		#Enter either "amd" or "intel" (all lowercase). This script assumes you're installing on an x86_64 system
+vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
+				#For AMD will install the OpenGL and Vulkan driver (mesa, not amdvlk), as well as the video acceration drivers. Does not install the Xorg drivers, you must install the separately if you want to use Xorg
+				#For Intel this installs OpenGL and Vulkan drivers, and video acceleration drivers
+				#For Nvidia this installs the proprietary driver. It assumes you're using a non-legacy GPU, which generally means any Geforce 600 or newer GTX card (some of the low end GT cards from 600, 700, and 800 series are legacy) 
+graphical_de="xfce4"		#Either "xfce4" for the standard XFCE install that you would get if you install using the XFCE live image
+				#Or "kde" for a 'minimal' KDE Plasma install with Wayland
+apps="nano flatpak"
+#apps for intel CPU: nonfree-repo, intel-ucode
+#apps for amd CPU: linux-firmware-amd
+#apps for amd GPU: linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau
+#apps for intel GPU: linux-firmware-intel mesa-dri mesa-vulkan-intel intel-ficeo-accel
+#apps for nvidia GPU: nonfree-repo nvidia
+#apps for kde: dbus elogind cdm NetworkManager plasma-workspace konsole alsa pulseaduio plasma-pa plasma-nm dolphin
 
 
-while [[ $luks_pw != $luks_pw_check ]]
-do
-	echo -e "\nEnter password to be used for disk encryption\n"
-	read luks_pw
-	echo -e "\nRe-enter password\n"
-	read  luks_pw_check
-done
+declare luks_pw root_pw user_pw
+declare -a disk_array
 
-while [[ $root_pw != $root_pw_check ]]
-do
-	echo -e "\nEnter password to be used for the root user\n"
-	read root_pw
-	echo -e "\nRe-enter password\n"
-	read  root_pw_check
-done
+echo -e "\nEnter password to be used for disk encryption\n"
+read luks_pw
 
-while [[ $user_pw != $user_pw_check ]]
-do
-	echo -e "\nEnter password to be used for the user account\n"
-	read user_pw
-	echo -e "\nRe-enter password\n"
-	read  user_pw_check
-done
+echo -e "\nEnter password to be used for the root user\n"
+read root_pw
 
-declare disk_array
+echo -e "\nEnter password to be used for the user account\n"
+read user_pw
+
 while IFS= read -r line; do
 	if [ "$line" != "" ]
 	then
@@ -50,7 +45,7 @@ while IFS= read -r line; do
 	fi
 done < <(fdisk -l | grep -v mapper | grep -o '/.*GiB')
 
-printf "\nSelect disk to be installed to, by entering the number to the left of the desired device and hitting Enter\n\n"
+printf "\nSelect disk to be installed to, by entering the number to the left of the desired device and hitting Enter\n"
 
 read selection
 
@@ -169,7 +164,7 @@ grub-install $disk_selected
 
 xbps-reconfigure -fa
 useradd $username
-usermod -aG wheel,audio,video $username
+usermod -aG wheel $username
 echo -e "$user_pw\n$user_pw" | passwd $username
 sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
 ' >> /mnt/chrootSetup.bash

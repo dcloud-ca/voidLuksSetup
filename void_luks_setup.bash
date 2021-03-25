@@ -16,13 +16,14 @@ vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
 				#For Nvidia this installs the proprietary driver. It assumes you're using a non-legacy GPU, which generally means any Geforce 600 or newer GTX card (some of the low end GT cards from 600, 700, and 800 series are legacy) 
 graphical_de="xfce4"		#Either "xfce4" for the standard XFCE install that you would get if you install using the XFCE live image
 				#Or "kde" for a 'minimal' KDE Plasma install with Wayland
-apps="nano flatpak"
+apps="nano flatpak elogind dbus alsa"
 #apps for intel CPU: nonfree-repo, intel-ucode
 #apps for amd CPU: linux-firmware-amd
-#apps for amd GPU: linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau
-#apps for intel GPU: linux-firmware-intel mesa-dri mesa-vulkan-intel intel-ficeo-accel
+#apps for amd GPU: linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu
+#apps for intel GPU: linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel
 #apps for nvidia GPU: nonfree-repo nvidia
-#apps for kde: dbus elogind cdm NetworkManager plasma-workspace konsole alsa pulseaduio plasma-pa plasma-nm dolphin
+#apps for kde: cdm NetworkManager plasma-workspace konsole alsa pulseaduio plasma-pa plasma-nm dolphin
+#apps for xfce: xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4
 
 
 declare luks_pw root_pw user_pw

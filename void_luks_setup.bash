@@ -22,7 +22,7 @@ apps="nano flatpak elogind dbus alsa"
 #apps for amd GPU: linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu
 #apps for intel GPU: linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel
 #apps for nvidia GPU: nonfree-repo nvidia
-#apps for kde: cdm NetworkManager plasma-workspace konsole alsa pulseaduio plasma-pa plasma-nm dolphin
+#apps for kde: emptty plasma-workspace konsole alsa pulseaduio plasma-pa dolphin #plasma-nm NetworkManager
 #apps for xfce: xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4
 
 

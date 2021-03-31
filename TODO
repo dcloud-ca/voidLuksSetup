@@ -1,0 +1,3 @@
+Edit emptty config file
+  tty=2
+  sudo sed -i 's/^#*tty=[0-9]*/

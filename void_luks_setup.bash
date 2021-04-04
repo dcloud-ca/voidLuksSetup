@@ -146,7 +146,7 @@ echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
 
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
 
-sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid apparmor=1 security=apparmor /" /mnt/etc/default/grub
+sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid rd.luks.allow-discards apparmor=1 security=apparmor /" /mnt/etc/default/grub
 
 
 dd bs=1 count=64 if=/dev/urandom of=/mnt/boot/volume.key
@@ -189,6 +189,8 @@ do
 	sudo ln -s /etc/sv/$service /var/service/
 done 
 
+sed -i 's/^#*APPARMOR=.*$/APPARMOR=complain/i' /mnt/etc/default/apparmor
+
 #Enable SSD trim
 
 #Enable AppArmor
@@ -196,7 +198,7 @@ done
 #Firewall setup
 
 #Enable numlock on startup
-	#echo 'INITTY=/dev/tty[1-2]; for tty in $INITTY; do setleds -D +num < $tty; done' >> /etc/rc.conf
+echo 'INITTY=/dev/tty[1-2]; for tty in $INITTY; do setleds -D +num < $tty; done' >> /mnt/etc/rc.conf
 
 # chroot /mnt bash chrootSetup.bash
 # rm /mnt/chrootSetup.bash

@@ -16,14 +16,16 @@ vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
 				#For Nvidia this installs the proprietary driver. It assumes you're using a non-legacy GPU, which generally means any Geforce 600 or newer GTX card (some of the low end GT cards from 600, 700, and 800 series are legacy) 
 graphical_de="xfce4"		#Either "xfce4" for the standard XFCE install that you would get if you install using the XFCE live image
 				#Or "kde" for a 'minimal' KDE Plasma install with Wayland
-apps="nano flatpak elogind dbus alsa"
+apps="nano flatpak elogind dbus alsa apparmor ufw cron"
 #apps for intel CPU: nonfree-repo, intel-ucode
 #apps for amd CPU: linux-firmware-amd
 #apps for amd GPU: linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu
 #apps for intel GPU: linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel
 #apps for nvidia GPU: nonfree-repo nvidia
-#apps for kde: emptty plasma-workspace konsole alsa pulseaduio plasma-pa dolphin #plasma-nm NetworkManager
+#apps for kde: emptty plasma-workspace konsole alsa kcron pulseaduio plasma-pa plasma-firewall dolphin #plasma-nm NetworkManager
 #apps for xfce: xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4
+rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "NetworkManager")
+en_services=("dbus" "elogind" "dhcpcd" "emptty" "ufw" "cron" "ntpd")
 
 
 declare luks_pw root_pw user_pw
@@ -144,7 +146,7 @@ echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /etc/fstab
 
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /etc/default/grub
 
-sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid /" /etc/default/grub
+sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid apparmor=1 security=apparmor /" /etc/default/grub
 
 
 dd bs=1 count=64 if=/dev/urandom of=/boot/volume.key
@@ -169,6 +171,32 @@ usermod -aG wheel $username
 echo -e "$user_pw\n$user_pw" | passwd $username
 sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
 ' >> /mnt/chrootSetup.bash
+
+#Edit emptty config file
+tty=2
+sudo sed -i "s/^#*TTY_NUMBER=[0-9]*/TTY_NUMBER=$tty/i" /mnt/etc/emptty/conf
+sudo sed -i "s/^#*DEFAULT_USER=/DEFAULT_USER=$user_name/i" /mnt/etc/emptty/conf
+  
+#Disable services
+for service in ${rm_services[@]}
+do
+	sudo rm /var/service/$service
+done
+  
+#Enable services
+for service in ${en_services[@]}
+do
+	sudo ln -s /etc/sv/$service /var/service/
+done 
+
+#Enable SSD trim
+
+#Enable AppArmor
+
+#Firewall setup
+
+#Enable numlock on startup
+	#echo 'INITTY=/dev/tty[1-2]; for tty in $INITTY; do setleds -D +num < $tty; done' >> /etc/rc.conf
 
 # chroot /mnt bash chrootSetup.bash
 # rm /mnt/chrootSetup.bash

@@ -126,51 +126,51 @@ echo -e "username=\"$username\"" >> /mnt/chrootSetup.bash
 echo -e "user_pw=\"$user_pw\"" >> /mnt/chrootSetup.bash
 echo -e "luks_uuid=\"$luks_uuid\"" >> /mnt/chrootSetup.bash
 
-echo '
-chown root:root /
-chmod 755 /
+#echo '
+chown root:root /mnt/
+chmod 755 /mnt/
 echo -e "$root_pw\n$root_pw" | passwd -q root
-echo $hostname > /etc/hostname
-echo "LANG=$language" > /etc/locale.conf
-# echo "en_US.UTF-8 UTF-8" >> /etc/default/libc-locales
-# xbps-reconfigure -f glibc-locales
+echo $hostname > /mnt/etc/hostname
+echo "LANG=$language" > /mnt/etc/locale.conf
+# echo "en_US.UTF-8 UTF-8" >> /mnt/etc/default/libc-locales
+# xbps-reconfigure -r /mnt/ -f glibc-locales
 
 #luks_uuid=$(blkid -o value -s UUID $luks_part)
 
-#echo -e "# <file system>	<dir>	<type>	<options>	<dump>	<pass>" > /etc/fstab
+#echo -e "# <file system>	<dir>	<type>	<options>	<dump>	<pass>" > /mnt/etc/fstab
 #echo -e "tmpfs	/tmp	tmpfs	defaults,nosuid,nodev	0	0" >> /etc/fstab
-echo -e "/dev/$hostname/root	/	$fs_type	defaults	0	0" >> /etc/fstab
-echo -e "/dev/$hostname/home	/home	$fs_type	defaults	0	0" >> /etc/fstab
-echo -e "/dev/$hostname/swap	swap	swap	defaults	0	0" >> /etc/fstab
-echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /etc/fstab
+echo -e "/dev/$hostname/root	/	$fs_type	defaults	0	0" >> /mnt/etc/fstab
+echo -e "/dev/$hostname/home	/home	$fs_type	defaults	0	0" >> /mnt/etc/fstab
+echo -e "/dev/$hostname/swap	swap	swap	defaults	0	0" >> /mnt/etc/fstab
+echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
 
-echo "GRUB_ENABLE_CRYPTODISK=y" >> /etc/default/grub
+echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
 
-sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid apparmor=1 security=apparmor /" /etc/default/grub
+sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid apparmor=1 security=apparmor /" /mnt/etc/default/grub
 
 
-dd bs=1 count=64 if=/dev/urandom of=/boot/volume.key
+dd bs=1 count=64 if=/dev/urandom of=/mnt/boot/volume.key
 
 echo $luks_pw | cryptsetup -q luksAddKey $luks_part /boot/volume.key #-q
 
-chmod 000 /boot/volume.key
-chmod -R g-rwx,o-rwx /boot
+chmod 000 /mnt/boot/volume.key
+chmod -R g-rwx,o-rwx /mnt/boot
 
-echo "$hostname	$luks_part	/boot/volume.key	luks" >> /etc/crypttab
+echo "$hostname	$luks_part	/boot/volume.key	luks" >> /mnt/etc/crypttab
 
-echo -e "install_items+=\" /boot/volume.key /etc/crypttab \"" > /etc/dracut.conf.d/10-crypt.conf
+echo -e "install_items+=\" /boot/volume.key /etc/crypttab \"" > /mnt/etc/dracut.conf.d/10-crypt.conf
 
 
 
 grub-install $disk_selected
 
 
-xbps-reconfigure -fa
+xbps-reconfigure -r /mnt/ -fa
 useradd $username
 usermod -aG wheel $username
 echo -e "$user_pw\n$user_pw" | passwd $username
-sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /etc/sudoers
-' >> /mnt/chrootSetup.bash
+sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /mnt/etc/sudoers
+#' >> /mnt/chrootSetup.bash
 
 #Edit emptty config file
 tty=2

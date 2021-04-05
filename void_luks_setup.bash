@@ -205,16 +205,36 @@ done
 #Enable services
 for service in ${en_services[@]}
 do
-	sudo ln -s /mnt/etc/sv/$service /mnt/etc/runit/runsvdir/default/
+	sudo ln -s /etc/sv/$service /mnt/etc/runit/runsvdir/default/
 done 
 
 sed -i 's/^#*APPARMOR=.*$/APPARMOR=complain/i' /mnt/etc/default/apparmor
+sed -i 's/^#*write-cache/write-cache/i' /mnt/etc/apparmor/parser.conf
 
+for dir in Desktop Documents Downloads Videos Pictures Music;
+do
+	mkdir -p /mnt/home/$username/$dir
+	chown $username:$username /mnt/home/$username/$dir
+	chmod 700 /mnt/home/$username/$dir
+done
+
+echo 'if [ -e $HOME/.bash_aliases ]; then
+source $HOME/.bash_aliases
+fi' >> /mnt/home/$username/.bashrc
+
+touch /mnt/home/$username/.bash_aliases
+chown $username:$username /mnt/home/$username/.bash_aliases
+echo "alias xi='sudo xbps-install -S" >> /mnt/home/$username/.bash_aliases 
+echo "alias xu='sudo xbps-install -Suy" >> /mnt/home/$username/.bash_aliases 
+echo "alias xs='xbps-query -Rs" >> /mnt/home/$username/.bash_aliases 
+echo "alias xr='sudo xbps-remove -oOR" >> /mnt/home/$username/.bash_aliases 
+echo "alias xq='xbps-query" >> /mnt/home/$username/.bash_aliases 
 
 #Edit emptty config file
 tty=2
 sed -i "s/^#*TTY_NUMBER=[0-9]*/TTY_NUMBER=$tty/i" /mnt/etc/emptty/conf
 sed -i "s/^#*DEFAULT_USER=/DEFAULT_USER=$user_name/i" /mnt/etc/emptty/conf
+sed -i "s/^#*VERTICAL_SELECTION=.*$/VERTICAL_SELECTION=true/i" /mnt/etc/emptty/conf
 
 #Enable SSD trim
 

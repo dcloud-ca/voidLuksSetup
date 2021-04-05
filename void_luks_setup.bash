@@ -199,7 +199,7 @@ xbps-install -Syr /mnt $apps
 #Disable services
 for service in ${rm_services[@]}
 do
-	sudo rm /etc/runit/runsvdir/default/$service
+	sudo rm /mnt/etc/runit/runsvdir/default/$service
 done
   
 #Enable services

@@ -17,8 +17,8 @@ vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
 graphical_de="xfce"		#"xfce" for the standard XFCE install that you would get if you install using the XFCE live image
                         	#Or "kde" for a 'minimal' KDE Plasma install with Wayland
                         	#Leave black (just double quotes, "") to not install DE. Will skip graphics driver installation as well
-
-apps="nano flatpak elogind dbus alsa-utils apparmor ufw cronie ntp rclone RcloneBrowser"
+void_repo="https://alpha.us.repo.voidlinux.org/"
+apps="nano flatpak elogind dbus alsa-utils apparmor ufw cronie ntp rclone RcloneBrowser firefox"
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "NetworkManager")
 en_services=("dbus" "elogind" "dhcpcd" "emptty" "ufw" "cronie" "ntpd")
 user_groups="wheel" #floppy,cdrom,optical,audio,video,kvm,xbuilder
@@ -185,10 +185,11 @@ chroot /mnt grub-install $disk_selected
 xbps-reconfigure -r /mnt/ -fa
 
 sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /mnt/etc/sudoers
+echo "Defaults editor=/usr/bin/nano" >> /mnt/etc/sudoers
 
 xbps-install -Suyr /mnt xbps
 
-if [[ $gpu == "nvidia" ]] || [[ $cpu == "intel" ]]
+if [[ $vendor_gpu == "nvidia" ]] || [[ $vendor_cpu == "intel" ]]
 then
     xbps-install -Syr /mnt/ void-repo-nonfree
 fi
@@ -224,11 +225,17 @@ sed -i "s/^#*DEFAULT_USER=/DEFAULT_USER=$user_name/i" /mnt/etc/emptty/conf
 #Enable numlock on startup
 echo 'INITTY=/dev/tty[1-2]; for tty in $INITTY; do setleds -D +num < $tty; done' >> /mnt/etc/rc.conf
 
+mkdir -p /mnt/etc/xbps.d
+cp /mnt/usr/share/xbps.d/*-repository-*.conf /mnt/etc/xbps.d/
+sed -i "s|https://alpha.de.repo.voidlinux.org|$void_repo|g" /etc/xbps.d/*-repository-*.conf
+
 # chroot /mnt bash chrootSetup.bash
 # rm /mnt/chrootSetup.bash
 
 # exit
 # umount -R /mnt
+# vgchange -an #hostname
+# cryptsetup luksClose $hostname
 # reboot
 
 

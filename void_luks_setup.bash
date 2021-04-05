@@ -14,7 +14,7 @@ vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
 				#For AMD will install the OpenGL and Vulkan driver (mesa, not amdvlk), as well as the video acceration drivers. Does not install the Xorg drivers, you must install the separately if you want to use Xorg
 				#For Intel this installs OpenGL and Vulkan drivers, and video acceleration drivers
 				#For Nvidia this installs the proprietary driver. It assumes you're using a non-legacy GPU, which generally means any Geforce 600 or newer GTX card (some of the low end GT cards from 600, 700, and 800 series are legacy) 
-graphical_de="xfce"		#"xfce" for the standard XFCE install that you would get if you install using the XFCE live image
+graphical_de="kde"		#"xfce" for the standard XFCE install that you would get if you install using the XFCE live image
                         	#Or "kde" for a 'minimal' KDE Plasma install with Wayland
                         	#Leave black (just double quotes, "") to not install DE. Will skip graphics driver installation as well
 void_repo="https://alpha.us.repo.voidlinux.org/"
@@ -29,7 +29,7 @@ declare apps_amd_cpu="linux-firmware-amd"
 declare apps_amd_gpu="linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu"
 declare apps_intel_gpu="linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel"
 declare apps_nvidia_gpu="nvidia"
-declare apps_kde="emptty plasma-workspace konsole kcron pulseaudio ark plasma-pa plasma-firewall dolphin" #plasma-nm NetworkManager
+declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa plasma-firewall dolphin" #plasma-nm NetworkManager
 declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4"
 declare luks_pw root_pw user_pw disk_selected
 

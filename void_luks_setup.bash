@@ -122,7 +122,7 @@ for dir in dev proc sys run; do mkdir -p /mnt/$dir ; mount --rbind /$dir /mnt/$d
 mkdir -p /mnt/home
 mount /dev/$hostname/home /mnt/home
 
-mkfs.vfat -q $efi_part
+mkfs.vfat $efi_part
 mkdir -p /mnt/boot/efi
 mount $efi_part /mnt/boot/efi
 

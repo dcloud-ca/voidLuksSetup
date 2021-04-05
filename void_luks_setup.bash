@@ -182,7 +182,7 @@ echo -e "install_items+=\" /boot/volume.key /etc/crypttab \"" > /mnt/etc/dracut.
 chroot /mnt grub-install $disk_selected
 
 
-xbps-reconfigure -r /mnt/ -fa
+xbps-reconfigure -far /mnt/
 
 sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /mnt/etc/sudoers
 echo "Defaults editor=/usr/bin/nano" >> /mnt/etc/sudoers
@@ -205,7 +205,7 @@ done
 #Enable services
 for service in ${en_services[@]}
 do
-	sudo ln -s /etc/sv/$service /etc/runit/runsvdir/default/
+	sudo ln -s /mnt/etc/sv/$service /mnt/etc/runit/runsvdir/default/
 done 
 
 sed -i 's/^#*APPARMOR=.*$/APPARMOR=complain/i' /mnt/etc/default/apparmor
@@ -227,7 +227,7 @@ echo 'INITTY=/dev/tty[1-2]; for tty in $INITTY; do setleds -D +num < $tty; done'
 
 mkdir -p /mnt/etc/xbps.d
 cp /mnt/usr/share/xbps.d/*-repository-*.conf /mnt/etc/xbps.d/
-sed -i "s|https://alpha.de.repo.voidlinux.org|$void_repo|g" /etc/xbps.d/*-repository-*.conf
+sed -i "s|https://alpha.de.repo.voidlinux.org|$void_repo|g" /mnt/etc/xbps.d/*-repository-*.conf
 
 # chroot /mnt bash chrootSetup.bash
 # rm /mnt/chrootSetup.bash

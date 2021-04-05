@@ -18,7 +18,7 @@ graphical_de="xfce"		#"xfce" for the standard XFCE install that you would get if
                         	#Or "kde" for a 'minimal' KDE Plasma install with Wayland
                         	#Leave black (just double quotes, "") to not install DE. Will skip graphics driver installation as well
 
-apps="nano flatpak elogind dbus alsa-utils apparmor ufw cronie ntp"
+apps="nano flatpak elogind dbus alsa-utils apparmor ufw cronie ntp rclone RcloneBrowser"
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "NetworkManager")
 en_services=("dbus" "elogind" "dhcpcd" "emptty" "ufw" "cronie" "ntpd")
 user_groups="wheel" #floppy,cdrom,optical,audio,video,kvm,xbuilder
@@ -36,10 +36,10 @@ declare luks_pw root_pw user_pw disk_selected
 
 case $vendor_cpu in
     "amd")
-        apps="$apps apps_amd_cpu"
+        apps="$apps $apps_amd_cpu"
         ;;
     "intel")
-        apps="$apps apps_intel_cpu"
+        apps="$apps $apps_intel_cpu"
         ;;
 esac
 
@@ -47,23 +47,23 @@ if [[ -n $graphical_de ]]
 then
     case $vendor_gpu in
         "amd")
-            apps="$apps apps_amd_gpu"
+            apps="$apps $apps_amd_gpu"
             ;;
         "intel")
-            apps="$apps apps_intel_gpu"
+            apps="$apps $apps_intel_gpu"
             ;;
         "nvidia")
-            apps="$apps apps_nvidia_gpu"
+            apps="$apps $apps_nvidia_gpu"
             ;;
     esac
 fi
 
 case $graphical_de in
     "kde")
-        apps="$apps apps_kde"
+        apps="$apps $apps_kde"
         ;;
     "xfce")
-        apps="$apps apps_xfce"
+        apps="$apps $apps_xfce"
         ;;
 esac
 
@@ -109,9 +109,9 @@ echo $luks_pw | cryptsetup -q luksOpen $luks_part $hostname
 
 vgcreate -q $hostname /dev/mapper/$hostname
 
-lvcreate -q --name root -L $root_part_size $hostname
-lvcreate -q --name swap -L $swap_size $hostname
-lvcreate -q --name home -l 100%FREE $hostname
+lvcreate --name root -qL $root_part_size $hostname
+lvcreate --name swap -qL $swap_size $hostname
+lvcreate --name home -ql 100%FREE $hostname
 
 mkfs.$fs_type -qL root /dev/$hostname/root
 mkfs.$fs_type -qL home /dev/$hostname/home
@@ -128,8 +128,6 @@ mount $efi_part /mnt/boot/efi
 
 echo y | xbps-install -Sy -R https://alpha.de.repo.voidlinux.org/current/$libc -r /mnt base-system cryptsetup grub-x86_64-efi lvm2
 
-echo -e "\npress enter\n"
-read tmp
 
 luks_uuid=$(blkid -o value -s UUID $luks_part)
 

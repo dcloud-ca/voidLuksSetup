@@ -20,8 +20,8 @@ There are a number of other smaller assumptions made in various default values p
 # Usage
 1. Create a Void live image (instructions [here](https://docs.voidlinux.org/installation/live-images/prep.html)), can use the base image or whatever 'flavor' you'd like (it won't impact the installation).
 2. Boot the live image, the login will be user:anon, password: voidlinux
-3. From the terminal, run: sudo xbps-install -Suy xbps; sudo xbps-install -Sy git
-4. Optionally install a different text editor. sudo xbps-install -Sy *editor*, where editor is the package name of the editor to install. For a console based editor I like nano (rather than the stock vi). If running a graphical live image, you can install something like gedit or kate5. 
+3. From the terminal, run: sudo xbps-install -Suy xbps; sudo xbps-install -Suy git
+4. Optionally install a different text editor. sudo xbps-install -Suy *editor*, where editor is the package name of the editor to install. For a console based editor I like nano (rather than the stock vi). If running a graphical live image, you can install something like gedit or kate5. 
 5. Run: git clone https://github.com/TJ-Hooker15/voidLuksSetup.git; cd voidLuksSetup
 6. Open void_luks_setup.bash in the editor. Edit the fields in the first section based on your configuration, as per the comments in the script. Optionally, you can also edit the fields in the 2nd section.
 7. Run: chmod +x void_luks_setup.bash

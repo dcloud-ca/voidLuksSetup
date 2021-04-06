@@ -264,11 +264,11 @@ fi' >> /mnt/home/$username/.bashrc
 chroot /mnt touch /home/$username/.bash_aliases
 chroot /mnt chown $username:$username /home/$username/.bash_aliases
 #Some personal aliases I use to shorten package manager commands. Inpsired by the command syntax used for xbps commands by the xtools package
-echo "alias xi='sudo xbps-install -S" >> /mnt/home/$username/.bash_aliases 
-echo "alias xu='sudo xbps-install -Suy" >> /mnt/home/$username/.bash_aliases 
-echo "alias xs='xbps-query -Rs" >> /mnt/home/$username/.bash_aliases 
-echo "alias xr='sudo xbps-remove -oOR" >> /mnt/home/$username/.bash_aliases 
-echo "alias xq='xbps-query" >> /mnt/home/$username/.bash_aliases 
+echo "alias xi='sudo xbps-install -S'" >> /mnt/home/$username/.bash_aliases 
+echo "alias xu='sudo xbps-install -Suy'" >> /mnt/home/$username/.bash_aliases 
+echo "alias xs='xbps-query -Rs'" >> /mnt/home/$username/.bash_aliases 
+echo "alias xr='sudo xbps-remove -oOR'" >> /mnt/home/$username/.bash_aliases 
+echo "alias xq='xbps-query'" >> /mnt/home/$username/.bash_aliases 
 
 #If KDE is selected for install, the emptty console-based display manager will be installed (unless configured otherwise)
 #If so, set emptty to use the TTY that is one higher than the number that are configured to be enabled in /var/service/

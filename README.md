@@ -29,5 +29,5 @@ There are a number of other smaller assumptions made in various default values p
 9. When prompted, select the desired drive for installation
 10. Depending what was previously on the installation drive, some warning(s) may be displayed about LUKS and/or filesystem headers being already present on the drive, this is not an issue.
 11. Wait for the installation to complete
-12. Near the end of the install script there may be some errors printed similar to: "cannot remove '[something]': No such file or directory". This is generally expected, as it is the script trying to disable services that may not have been enabled in the first place.
+12. Near the end of the install script there may be some errors printed similar to: "cannot remove '[something]': No such file or directory". This is generally expected, as the script tries to disable a number of services, some of which may not have been enabled in the first place.
 13. Once the installation has completed, the user will be asked whether to automatically reboot.

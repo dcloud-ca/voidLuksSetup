@@ -31,6 +31,7 @@ vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
 
 discards="rd.luks.allow-discards"	#If you're installing on an SSD and you want discard (automatic TRIM) enabled, enter "rd.luks.allow-discards".
 					#Otherwise, leave blank (just double quotes, "")
+					#Note that there privacy/security considerations to enabling TRIM with LUKS: https://wiki.archlinux.org/index.php/Dm-crypt/Specialties#Discard/TRIM_support_for_solid_state_drives_(SSD)
 
 graphical_de="kde"		#"xfce" for the standard XFCE install that you would get if you install using the XFCE live image
                         	#Or "kde" for a KDE Plasma Wayland install. Somewhat reduced install compared to the full 'kde5' package. Uses a console-based display manager (emptty) rather than SDDM (as this would require Xorg).

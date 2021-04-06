@@ -2,7 +2,7 @@
 Bash script for installing Void Linux with disk encryption.
 
 # References
-Much of what is done in this script came straight from the official [Void Documentation](https://docs.voidlinux.org/installation/guides/fde.html). I just adapted commands where necessary to make them script-able, as well as made a number of assumptions/personal choices as to what additional configuration/utilities should be added.
+Much of what is done in this script came almost straight from the official [Void Documentation](https://docs.voidlinux.org/installation/guides/fde.html). I just adapted commands where necessary to make them script-able, as well as made a number of assumptions/personal choices as to what additional configuration/utilities should be added.
 
 I also used the [Arch Wiki](https://wiki.archlinux.org/) as a reference.
 

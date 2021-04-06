@@ -1,7 +1,7 @@
 #!/bin/bash
 
 efi_part_size="260M"		#Minimum of 100M, Arch wiki recommends at least 260M (as of 24-Mar-2021)
-root_part_size="20G"		#Size of the root partition. Required size depends on how much software you ultimately install, but Arch wiki recommends 15-20G (as of 24-Mar-2021)
+root_part_size="15G"		#Size of the root partition. Required size depends on how much software you ultimately install, but Arch wiki recommends 15-20G (as of 24-Mar-2021)
 swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM.
 				#Otherwise, equal to square root of RAM (rounded up), or at least 2G
 username="user"			#Desired username for regular (non-root) user of the Void installation you're making
@@ -126,17 +126,13 @@ mkfs.vfat $efi_part
 mkdir -p /mnt/boot/efi
 mount $efi_part /mnt/boot/efi
 
-echo y | xbps-install -Sy -R https://alpha.de.repo.voidlinux.org/current/$libc -r /mnt base-system cryptsetup grub-x86_64-efi lvm2
+echo y | xbps-install -SyR https://alpha.de.repo.voidlinux.org/current/$libc -r /mnt base-system cryptsetup grub-x86_64-efi lvm2
 
 
 luks_uuid=$(blkid -o value -s UUID $luks_part)
 
 
-cp /etc/resolv.conf /mnt/etc/
-
-echo "Press any key\n"
-read tmp
-
+cp /etc/resolv.conf /mnt/etc
 
 chroot /mnt chown root:root /
 chroot /mnt chmod 755 /
@@ -199,13 +195,13 @@ xbps-install -Syr /mnt $apps
 #Disable services
 for service in ${rm_services[@]}
 do
-	sudo rm /mnt/etc/runit/runsvdir/default/$service
+	rm /mnt/etc/runit/runsvdir/default/$service
 done
   
 #Enable services
 for service in ${en_services[@]}
 do
-	sudo ln -s /etc/sv/$service /mnt/etc/runit/runsvdir/default/
+	ln -s /etc/sv/$service /mnt/etc/runit/runsvdir/default/
 done 
 
 sed -i 's/^#*APPARMOR=.*$/APPARMOR=complain/i' /mnt/etc/default/apparmor

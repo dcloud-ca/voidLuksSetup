@@ -195,8 +195,7 @@ echo -e "/dev/$hostname/home	/home	$fs_type	defaults	0	0" >> /mnt/etc/fstab
 echo -e "/dev/$hostname/swap	swap	swap	defaults	0	0" >> /mnt/etc/fstab
 echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
 
-#Modify GRUB config to allow for LUKS encryption. The "rd.luks.allow-discards" allows discards (automatic TRIM) if you're installing on an SSD
-#The two apparmor items enable the apparmor security module.
+#Modify GRUB config to allow for LUKS encryption. The two apparmor items enable the apparmor security module.
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
 sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid $drive_type apparmor=1 security=apparmor /" /mnt/etc/default/grub
 

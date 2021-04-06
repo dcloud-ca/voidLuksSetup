@@ -195,13 +195,13 @@ xbps-install -Syr /mnt $apps
 #Disable services
 for service in ${rm_services[@]}
 do
-	rm /mnt/etc/runit/runsvdir/default/$service
+	chroot /mnt rm /etc/runit/runsvdir/default/$service
 done
   
 #Enable services
 for service in ${en_services[@]}
 do
-	ln -s /etc/sv/$service /mnt/etc/runit/runsvdir/default/
+	chroot /mnt ln -s /etc/sv/$service /etc/runit/runsvdir/default/
 done 
 
 sed -i 's/^#*APPARMOR=.*$/APPARMOR=complain/i' /mnt/etc/default/apparmor
@@ -209,17 +209,17 @@ sed -i 's/^#*write-cache/write-cache/i' /mnt/etc/apparmor/parser.conf
 
 for dir in Desktop Documents Downloads Videos Pictures Music;
 do
-	mkdir -p /mnt/home/$username/$dir
-	chown $username:$username /mnt/home/$username/$dir
-	chmod 700 /mnt/home/$username/$dir
+	chroot /mnt mkdir -p /home/$username/$dir
+	chroot /mnt chown $username:$username /home/$username/$dir
+	chroot /mnt chmod 700 /home/$username/$dir
 done
 
 echo 'if [ -e $HOME/.bash_aliases ]; then
 source $HOME/.bash_aliases
 fi' >> /mnt/home/$username/.bashrc
 
-touch /mnt/home/$username/.bash_aliases
-chown $username:$username /mnt/home/$username/.bash_aliases
+chroot /mnt touch /home/$username/.bash_aliases
+chroot /mnt chown $username:$username /home/$username/.bash_aliases
 echo "alias xi='sudo xbps-install -S" >> /mnt/home/$username/.bash_aliases 
 echo "alias xu='sudo xbps-install -Suy" >> /mnt/home/$username/.bash_aliases 
 echo "alias xs='xbps-query -Rs" >> /mnt/home/$username/.bash_aliases 
@@ -241,14 +241,10 @@ sed -i "s/^#*VERTICAL_SELECTION=.*$/VERTICAL_SELECTION=true/i" /mnt/etc/emptty/c
 #Enable numlock on startup
 echo 'INITTY=/dev/tty[1-2]; for tty in $INITTY; do setleds -D +num < $tty; done' >> /mnt/etc/rc.conf
 
-mkdir -p /mnt/etc/xbps.d
-cp /mnt/usr/share/xbps.d/*-repository-*.conf /mnt/etc/xbps.d/
+chroot /mnt mkdir -p /etc/xbps.d
+chroot /mnt cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
 sed -i "s|https://alpha.de.repo.voidlinux.org|$void_repo|g" /mnt/etc/xbps.d/*-repository-*.conf
 
-# chroot /mnt bash chrootSetup.bash
-# rm /mnt/chrootSetup.bash
-
-# exit
 # umount -R /mnt
 # vgchange -an #hostname
 # cryptsetup luksClose $hostname

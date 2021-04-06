@@ -29,7 +29,7 @@ vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
 				#For Intel this installs OpenGL and Vulkan drivers, and video acceleration drivers
 				#For Nvidia this installs the proprietary driver. It assumes you're using a non-legacy GPU, which generally means any Geforce 600 or newer GTX card (some of the low end GT cards from 600, 700, and 800 series are legacy) 
 
-drive_type="rd.luks.allow-discards"	#If you're installing on an SSD and you want discard (automatic TRIM) enabled, enter "rd.luks.allow-discards".
+discards="rd.luks.allow-discards"	#If you're installing on an SSD and you want discard (automatic TRIM) enabled, enter "rd.luks.allow-discards".
 					#Otherwise, leave blank (just double quotes, "")
 
 graphical_de="kde"		#"xfce" for the standard XFCE install that you would get if you install using the XFCE live image
@@ -197,7 +197,7 @@ echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
 
 #Modify GRUB config to allow for LUKS encryption. The two apparmor items enable the apparmor security module.
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
-sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid $drive_type apparmor=1 security=apparmor /" /mnt/etc/default/grub
+sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid $discards apparmor=1 security=apparmor /" /mnt/etc/default/grub
 
 #To avoid having to enter the password twice on boot, a key will be configured to automatically unlock the encrypted volume on boot.
 #Generate keyfile

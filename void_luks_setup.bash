@@ -143,7 +143,7 @@ echo "LANG=$language" > /mnt/etc/locale.conf
 if [[ -z $libc ]]
 then
     echo "en_US.UTF-8 UTF-8" >> /mnt/etc/default/libc-locales
-    xbps-reconfigure -r /mnt/ -f glibc-locales
+    xbps-reconfigure -fr /mnt/ glibc-locales
 fi
 
 echo -e "/dev/$hostname/root	/	$fs_type	defaults	0	0" >> /mnt/etc/fstab

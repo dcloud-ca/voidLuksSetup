@@ -263,7 +263,7 @@ fi' >> /mnt/home/$username/.bashrc
 #Create .bash_aliases file, sets owner to user
 chroot /mnt touch /home/$username/.bash_aliases
 chroot /mnt chown $username:$username /home/$username/.bash_aliases
-#Some personal aliases I use to shorten package manager commands. Inpsired by the command syntax used for xbps commands by the xtools package
+#Some personal aliases I use to shorten package manager commands. Inpsired by the command syntax used for xbps commands by the xtools package (http://git.vuxu.org/xtools)
 echo "alias xi='sudo xbps-install -S'" >> /mnt/home/$username/.bash_aliases 
 echo "alias xu='sudo xbps-install -Suy'" >> /mnt/home/$username/.bash_aliases 
 echo "alias xs='xbps-query -Rs'" >> /mnt/home/$username/.bash_aliases 

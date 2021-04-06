@@ -1,28 +1,54 @@
 #!/bin/bash
 
+###############################################################################################################
+#BEGIN MANDATORY FIELDS
+#These fields must be configured as per your computer hardware and desired install configuration
+
 efi_part_size="260M"		#Minimum of 100M, Arch wiki recommends at least 260M (as of 24-Mar-2021)
-root_part_size="15G"		#Size of the root partition. Required size depends on how much software you ultimately install, but Arch wiki recommends 15-20G (as of 24-Mar-2021)
+
+root_part_size="15G"		#Size of the root partition. Required size depends on how much software you ultimately install
+				#Arch wiki recommends 15-20G (as of 24-Mar-2021)
+				
 swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM.
 				#Otherwise, equal to square root of RAM (rounded up), or at least 2G
+
 username="user"			#Desired username for regular (non-root) user of the Void installation you're making
+
 hostname="desktop"		#Desired name to be used for the hostname of the Void installation as well as the volume group name
+
 fs_type="ext4"			#Desired filesystem to be used for the root and home partitions
-libc="musl" 			#"musl" for musl, "" for glibc
+
+libc="musl" 			#"musl" for musl, "" for glibc.
+
 language="en_US.UTF-8"
+
 vendor_cpu="intel"		#Enter either "amd" or "intel" (all lowercase). This script assumes you're installing on an x86_64 system
+
 vendor_gpu="amd"		#Enter either "amd", "intel", or "nvidia" (all lowercase)
-				#For AMD will install the OpenGL and Vulkan driver (mesa, not amdvlk), as well as the video acceration drivers. Does not install the Xorg drivers, you must install the separately if you want to use Xorg
+				#For AMD will install the OpenGL and Vulkan driver (mesa, not amdvlk), as well as the video acceration drivers.
 				#For Intel this installs OpenGL and Vulkan drivers, and video acceleration drivers
 				#For Nvidia this installs the proprietary driver. It assumes you're using a non-legacy GPU, which generally means any Geforce 600 or newer GTX card (some of the low end GT cards from 600, 700, and 800 series are legacy) 
+
 graphical_de="kde"		#"xfce" for the standard XFCE install that you would get if you install using the XFCE live image
-                        	#Or "kde" for a 'minimal' KDE Plasma install with Wayland
-                        	#Leave black (just double quotes, "") to not install DE. Will skip graphics driver installation as well
-void_repo="https://alpha.us.repo.voidlinux.org/"
+                        	#Or "kde" for a KDE Plasma Wayland install. Somewhat reduced install compared to the full 'kde5' package. Uses a console-based display manager (emptty) rather than SDDM (as this would require Xorg).
+                        	#Leave blank (just double quotes, "") to not install DE. Will skip graphics driver installation as well
+
+void_repo="https://alpha.us.repo.voidlinux.org/"	#List of mirrors can be found here: https://docs.voidlinux.org/xbps/repositories/mirrors/index.html
+
+#END MANDATORY FIELDS
+###############################################################################################################
+#BEGIN OPTIONAL FIELDS
+#This script sources a list of apps to install and services to enable/disable from the "apps&services" file.
+
+declare apps rm_services en_services
+
 apps="nano flatpak elogind dbus alsa-utils apparmor ufw cronie ntp rclone RcloneBrowser firefox"
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "NetworkManager")
 en_services=("dbus" "elogind" "dhcpcd" "emptty" "ufw" "cronie" "ntpd")
 user_groups="wheel" #floppy,cdrom,optical,audio,video,kvm,xbuilder
 
+###############################################################################################################
+#These should only need to be changed if you want to tweak what gets installed as part of your graphical desktop environment (or you have an old Nvidia or AMD/ATI GPU, and need to use a different driver package)
 
 declare apps_intel_cpu="intel-ucode"
 declare apps_amd_cpu="linux-firmware-amd"
@@ -33,6 +59,8 @@ declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa p
 declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4"
 declare luks_pw root_pw user_pw disk_selected
 
+
+###############################################################################################################
 
 case $vendor_cpu in
     "amd")

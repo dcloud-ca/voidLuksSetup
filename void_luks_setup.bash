@@ -42,7 +42,7 @@ void_repo="https://alpha.us.repo.voidlinux.org/"	#List of mirrors can be found h
 ###############################################################################################################
 #BEGIN OPTIONAL FIELDS
 #Lists of apps to install, services to enable/disable, and groups that the user should be made a part of, to be performed during the install
-#These can be edited prior to running the script, but all of these things can be also be changed pretty easily post-installation in your running Void install
+#These can be edited prior to running the script, but you can also easily install (and uninstall) packages, and enable/disable services, once you're up and running.
 
 #Note that the script assumes nano is being installed, and sets it as the default editor for sudoers later in the script
 #Even if apparmor is removed here, it will still be added to the kernal command line arguments in the GRUB config performed further in the script

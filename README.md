@@ -18,7 +18,7 @@ A (non-exhaustive) list of the more fundatmental assumptions made by this script
 There are a number of other smaller assumptions made in various default values populated in the script, but for the most part these are meant to be easily changeable by the user by editing the fields at the start of script file.
 
 # Usage
-1. Create a Void live image (instructions here: https://docs.voidlinux.org/installation/live-images/prep.html), can use the base image or whatever 'flavor' you'd like (it won't impact the installation). The login for the live images is user:anon, password: voidlinux
+1. Create a Void live image (instructions [here](https://docs.voidlinux.org/installation/live-images/prep.html)), can use the base image or whatever 'flavor' you'd like (it won't impact the installation). The login for the live images is user:anon, password: voidlinux
 2. From the terminal, run: sudo xbps-install -Suy xbps; sudo xbps-install -Sy git
 3. Optionally install a different text editor. sudo xbps-install -Sy *editor*, where editor is the package name of the editor to install. For a console based editor I like nano (rather than the stock vi). If running a graphical live image, you can install something like gedit or kate5. 
 4. Run: git clone https://github.com/TJ-Hooker15/voidLuksSetup.git; cd voidLuksSetup

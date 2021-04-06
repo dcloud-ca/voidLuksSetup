@@ -7,7 +7,7 @@ Much of what is done in this script came straight from the official [Void Docume
 I also used the [Arch Wiki](https://wiki.archlinux.org/) as a reference.
 
 # Assumptions
-There are a number of assumptions that were made for this script. A (non-exhaustive) list of the more fundatmental ones is:
+A (non-exhaustive) list of the more fundatmental assumptions made by this script:
 1. Assumes an x86_64 system
 2. Assumes installation from a running Void live image
 3. Assumes an EFI/GPT installation

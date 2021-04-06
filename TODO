@@ -1,9 +1,1 @@
 
-Enable SSD trim
-
-Enable AppArmor
-
-Firewall setup
-
-Enable numlock on startup
-	echo 'INITTY=/dev/tty[1-2]; for tty in $INITTY; do setleds -D +num < $tty; done' >> /etc/rc.conf

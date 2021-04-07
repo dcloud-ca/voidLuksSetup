@@ -34,15 +34,15 @@ discards="rd.luks.allow-discards"	#If you're installing on an SSD and you want d
 					#Otherwise, leave blank (just double quotes, "")
 					#Note that there privacy/security considerations to enabling TRIM with LUKS: https://wiki.archlinux.org/index.php/Dm-crypt/Specialties#Discard/TRIM_support_for_solid_state_drives_(SSD)
 
-graphical_de="kde"		#"xfce" for the standard XFCE install that you would get if you install using the XFCE live image
-                        	#Or "kde" for a KDE Plasma Wayland install. Somewhat reduced install compared to the full 'kde5' meta-package. Uses a console-based display manager (emptty) rather than SDDM (as this would require Xorg).
+graphical_de="kde"		#"xfce" for an XFCE4 (xorg) install
+                        	#Or "kde" for a KDE Plasma 5 (wayland) install. Somewhat reduced install compared to the full 'kde5' meta-package. Uses a console-based display manager (emptty) rather than SDDM (as this would require Xorg).
                         	#Or leave blank (just double quotes, "") to not install DE. Will skip graphics driver installation as well
 
 void_repo="https://alpha.us.repo.voidlinux.org/"	#List of mirrors can be found here: https://docs.voidlinux.org/xbps/repositories/mirrors/index.html
 
 #END MANDATORY FIELDS
 ###############################################################################################################
-#BEGIN OPTIONAL FIELDS
+#BEGIN APP/SERVICE SELECTION
 #Lists of apps to install, services to enable/disable, and groups that the user should be made a part of, to be performed during the install
 #These can be edited prior to running the script, but you can also easily install (and uninstall) packages, and enable/disable services, once you're up and running.
 
@@ -52,12 +52,15 @@ apps="nano flatpak elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox"
 
 #elogind and acpid should not both be enabled. Same with dhcpcd and NetworkManager.
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "dhcpcd") 
-en_services=("dbus" "elogind" "NetworkManager" "emptty" "ufw" "cronie" "ntpd")
+en_services=("dbus" "elogind" "NetworkManager" "ufw" "cronie" "ntpd")
 	
 #Being part of the wheel group allows use of sudo so you'll be able to add yourself to more groups in the future without having to login as root
 #Some additional groups you may way to add to the above list (separate with commas, no spaces): floppy,cdrom,optical,audio,video,kvm,xbuilder
 user_groups="wheel"
+
+#END APP/SERVICE SELECTION
 ###############################################################################################################
+#BEGIN CPU/DRIVER/DE PACKAGES
 #These should only need to be changed if you want to tweak what gets installed as part of your graphical desktop environment
 #Or you have an old Nvidia or AMD/ATI GPU, and need to use a different driver package
 
@@ -69,7 +72,9 @@ declare apps_nvidia_gpu="nvidia"
 declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa kdeplasma-addons5 user-manager plasma-nm dolphin xdg-utils kscreen kwayland-integration xdg-desktop-portal-kde upower udisks2" #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
 declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4"
 
+#END CPU/DRIVER/DE PACKAGES
 ###############################################################################################################
+
 #Add CPU microcode, graphics drivers, and/or desktop environment packages to the list of packages to install
 case $vendor_cpu in
     "amd")
@@ -95,9 +100,11 @@ fi
 case $graphical_de in
     "kde")
         apps="$apps $apps_kde"
+	en_services+=("emptty")
         ;;
     "xfce")
         apps="$apps $apps_xfce"
+	en_services+=("lightdm")
         ;;
 esac
 

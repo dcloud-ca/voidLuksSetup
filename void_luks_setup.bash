@@ -124,11 +124,10 @@ select line in $(fdisk -l | grep -v mapper | grep -o '/.*GiB' | tr -d ' '); do
         disk_selected=$(echo $line | sed 's/:.*$//')
         break
 done
-if [[ $(echo $disk_selected | grep -o sd) == "sd" ]]; then
+if [[ $disk_selected == *"sd"* ]]; then
 	efi_part=$(echo $disk_selected'1')
 	luks_part=$(echo $disk_selected'2')
-fi
-if [[ $(echo $disk_selected | grep -o nvme) == "nvme" ]]; then
+elif [[ $disk_selected == *"nvme"* ]]; then
 	efi_part=$(echo $disk_selected'p1')
 	luks_part=$(echo $disk_selected'p2')
 fi

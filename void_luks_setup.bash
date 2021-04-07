@@ -306,8 +306,8 @@ echo -e "\nUnmount newly created Void installation and reboot? (y/n)\n"
 read tmp
 if [[ $tmp == "y" ]]; then
 	umount -R /mnt				#Unmount root volume
-	vgchange -an				#Deactivate volume group
-	cryptsetup luksClose $hostname		#Close LUKS encrypted partition
+	vgchange -anq				#Deactivate volume group
+	cryptsetup -q luksClose $hostname		#Close LUKS encrypted partition
 	reboot
 fi
 

@@ -13,16 +13,16 @@ A (non-exhaustive) list of the more fundatmental assumptions made by this script
 3. Assumes an EFI/GPT installation
 4. Assumes that the entire installation (boot loader, root, home) are on the same drive
 5. Assumes the installation will occupy the entire drive (the whole drive will be wiped pior to installation)
-6. The installation will use separate partitions (volumes) for swap and /home, in addition to the root parition (volume)
+6. The installation will use separate partitions (volumes) for swap and /home, in addition to the root partition (volume)
 
-There are a number of other smaller assumptions made in various default values populated in the script, but for the most part these are meant to be easily changeable by the user by editing the fields at the start of script file.
+There are a number of other smaller assumptions made in various default values populated in the script, but for the most part these are meant to be easily changeable by the user by editing the fields located near the start of the script file.
 
 # Usage
 1. Create a Void live image (instructions [here](https://docs.voidlinux.org/installation/live-images/prep.html)), can use the base image or whatever 'flavor' you'd like (it won't impact the installation).
 2. Boot the live image, the login will be user:anon, password: voidlinux
-3. From the terminal, run: *sudo xbps-install -Suy xbps; sudo xbps-install -Suy git*
-4. Optionally, install your desired text editor (the pre-installed editor(s) available will vary depending on which live image you're using): *sudo xbps-install -Suy [editor]*, where [editor] is the package name of the editor to install. For a console based editor I like nano. If running a graphical live image, you can install something like gedit or kate5. 
-5. Run: *git clone https<nolink>://github.com/TJ-Hooker15/voidLuksSetup.git; cd voidLuksSetup*
+3. From the terminal, run: *sudo xbps-install -Suy xbps*
+4. Download the script. Either do so manually, or use git: *sudo xbps-install -Suy git; git clone https<nolink>://github.com/TJ-Hooker15/voidLuksSetup.git*
+5. Optionally, install your desired text editor (the pre-installed editor(s) available will vary depending on which live image you're using): *sudo xbps-install -Suy [editor]*, where [editor] is the package name of the editor to install. For a console based editor I like nano. If running a graphical live image, you can install something like gedit or kate5. 
 6. Open void_luks_setup.bash in the editor (e.g. *nano void_luks_setup.bash*). Edit the fields in the first section based on your configuration, as per the comments in the script. Optionally, you can also edit the fields in the 2nd section as well.
 7. Run: *chmod +x void_luks_setup.bash; sudo ./void_luks_setup.bash*
 9. When prompted, enter the desired passwords for LUKS encryption, root user, and non-root user

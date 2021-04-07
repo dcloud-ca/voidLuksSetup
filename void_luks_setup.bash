@@ -140,13 +140,13 @@ printf 'label: gpt\n, %s, U, *\n, , L\n' "$efi_part_size" | sfdisk -q "$disk_sel
 #Create LUKS encrypted partition
 echo $luks_pw | cryptsetup -q luksFormat --type luks1 $luks_part
 #Open encrypted partition
-echo $luks_pw | cryptsetup -q luksOpen $luks_part $hostname
+echo $luks_pw | cryptsetup luksOpen $luks_part $hostname
 
 #Create volume group in encrypted partition, and create root, swap and home volumes
-vgcreate -q $hostname /dev/mapper/$hostname
-lvcreate --name root -qL $root_part_size $hostname
-lvcreate --name swap -qL $swap_size $hostname
-lvcreate --name home -ql 100%FREE $hostname
+vgcreate $hostname /dev/mapper/$hostname
+lvcreate --name root -L $root_part_size $hostname
+lvcreate --name swap -L $swap_size $hostname
+lvcreate --name home -l 100%FREE $hostname
 #Create swap, root, and home filesystems, with the filesystem for home and root as selected above
 mkfs.$fs_type -qL root /dev/$hostname/root
 mkfs.$fs_type -qL home /dev/$hostname/home
@@ -306,8 +306,8 @@ echo -e "\nUnmount newly created Void installation and reboot? (y/n)\n"
 read tmp
 if [[ $tmp == "y" ]]; then
 	umount -R /mnt				#Unmount root volume
-	vgchange -anq				#Deactivate volume group
-	cryptsetup -q luksClose $hostname	#Close LUKS encrypted partition
+	vgchange -an				#Deactivate volume group
+	cryptsetup luksClose $hostname	#Close LUKS encrypted partition
 	reboot
 fi
 

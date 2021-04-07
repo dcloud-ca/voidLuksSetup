@@ -160,7 +160,7 @@ mkdir -p /mnt/boot/efi
 mount $efi_part /mnt/boot/efi
 
 #Install Void directly from the repo
-echo y | xbps-install -SyR https://alpha.de.repo.voidlinux.org/current/$libc -r /mnt base-system cryptsetup grub-x86_64-efi lvm2
+echo y | xbps-install -SyR $void_repo/current/$libc -r /mnt base-system cryptsetup grub-x86_64-efi lvm2
 
 #Find the UUID of the encrypted LUKS partition
 luks_uuid=$(blkid -o value -s UUID $luks_part)
@@ -227,13 +227,13 @@ sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /mnt/etc/sudoers
 echo "Defaults editor=/usr/bin/nano" >> /mnt/etc/sudoers
 
 #Ensure the xbps package manager in the chroot is up to date
-xbps-install -Suyr /mnt xbps
+xbps-install -SuyR $void_repo/current/$libc -r /mnt xbps
 #Nvidia graphics drivers and intel microcode are both proprietary, if we need to install either we need to install the nonfree repo
 if [[ $vendor_gpu == "nvidia" ]] || [[ $vendor_cpu == "intel" ]]; then
-    xbps-install -Syr /mnt/ void-repo-nonfree
+    xbps-install -SyR $void_repo/current/$libc -r /mnt/ void-repo-nonfree
 fi
 #Install all previously selected packages. This includes all applications in the "apps" variable, as well as packages for graphics drivers, CPU microcode, and graphical DE based on selected options
-xbps-install -Syr /mnt $apps
+xbps-install -SyR $void_repo/current/$libc -r /mnt $apps
   
 #Disable services as selected above
 for service in ${rm_services[@]}; do

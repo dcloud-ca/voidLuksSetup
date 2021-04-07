@@ -173,8 +173,8 @@ chroot /mnt chown root:root /
 chroot /mnt chmod 755 /
 
 #Create non-root user and add them to group(s)
-chroot useradd $username
-chroot usermod -aG $user_groups $username
+chroot /mnt useradd $username
+chroot /mnt usermod -aG $user_groups $username
 #Use the "HereDoc" to send a sequence of commands into chroot, allowing the root and non-root user passwords in the chroot to be set non-interactively
 cat << EOF | chroot /mnt
 echo "$root_pw\n$root_pw" | passwd -q root

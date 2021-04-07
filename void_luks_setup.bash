@@ -48,7 +48,7 @@ void_repo="https://alpha.us.repo.voidlinux.org/"	#List of mirrors can be found h
 
 #Note that the script assumes nano is being installed, and sets it as the default editor for sudoers later in the script
 #Even if apparmor is removed here, it will still be added to the kernal command line arguments in the GRUB config performed further in the script
-apps="nano elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox"
+apps="nano flatpak elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox"
 
 #elogind and acpid should not both be enabled. Same with dhcpcd and NetworkManager.
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "dhcpcd") 

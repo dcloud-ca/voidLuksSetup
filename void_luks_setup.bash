@@ -291,7 +291,7 @@ done' >> /mnt/etc/rc.conf
 
 #Change the void repository mirror to be used by the package manager
 chroot /mnt mkdir -p /etc/xbps.d
-chroot /mnt cp /usr/share/xbps.d/*-repository-*.conf /etc/xbps.d/
+cp /mnt/usr/share/xbps.d/*-repository-*.conf /mnt/etc/xbps.d/
 sed -i "s|https://alpha.de.repo.voidlinux.org|$void_repo|g" /mnt/etc/xbps.d/*-repository-*.conf
 
 echo -e "\nUnmount newly created Void installation and reboot? (y/n)\n"

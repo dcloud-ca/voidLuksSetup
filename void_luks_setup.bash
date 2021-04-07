@@ -307,7 +307,7 @@ read tmp
 if [[ $tmp == "y" ]]; then
 	umount -R /mnt				#Unmount root volume
 	vgchange -anq				#Deactivate volume group
-	cryptsetup -q luksClose $hostname		#Close LUKS encrypted partition
+	cryptsetup -q luksClose $hostname	#Close LUKS encrypted partition
 	reboot
 fi
 

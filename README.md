@@ -18,7 +18,7 @@ A (non-exhaustive) list of the more fundatmental assumptions made by this script
 There are a number of other smaller assumptions made in various default values populated in the script, but for the most part these are meant to be easily changeable by the user by editing the fields located near the start of the script file.
 
 # Usage
-1. Create a Void live image (instructions [here](https://docs.voidlinux.org/installation/live-images/prep.html)), can use the base image or whatever 'flavor' you'd like (it won't impact the installation).
+1. Create a Void live image (instructions [here](https://docs.voidlinux.org/installation/live-images/prep.html)). You can use the base image or whichever graphical 'flavor' you'd like (it won't impact the installation).
 2. Boot the live image, the login will be user:anon, password: voidlinux
 3. From the terminal, run: *sudo xbps-install -Suy xbps*
 4. Download the script. Either do so manually, or use git: *sudo xbps-install -Suy git; git clone https<nolink>://github.com/TJ-Hooker15/voidLuksSetup.git*
@@ -27,7 +27,8 @@ There are a number of other smaller assumptions made in various default values p
 7. Run: *chmod +x void_luks_setup.bash; sudo ./void_luks_setup.bash*
 9. When prompted, enter the desired passwords for LUKS encryption, root user, and non-root user
 10. When prompted, select the desired drive for installation
-11. Depending what was previously on the installation drive, some warning(s) may be displayed about LUKS and/or filesystem headers being already present on the drive, this is not an issue.
+11. Depending on what was previously on the installation drive, some warning(s) may be displayed about LUKS and/or filesystem headers being already present on the drive, this is not an issue.
 12. Wait for the installation to complete
 13. Near the end of the install script there may be some errors printed similar to: "cannot remove '[something]': No such file or directory". This is generally expected, as the script tries to disable a number of services, some of which may not have been enabled in the first place.
 14. Once the installation has completed, the user will be asked whether to automatically reboot.
+15. Installation is done!

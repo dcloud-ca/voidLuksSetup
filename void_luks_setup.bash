@@ -7,10 +7,11 @@
 efi_part_size="260M"		#Minimum of 100M, Arch wiki recommends at least 260M (as of 24-Mar-2021)
 
 root_part_size="15G"		#Size of the root partition. Required size depends on how much software you ultimately install
+				#If you run this install script without modifying the apps to be installed (including KDE graphical DE), about 4-5G is used
 				#Arch wiki recommends 15-20G (as of 24-Mar-2021)
 				
-swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM.
-				#Otherwise, equal to square root of RAM (rounded up), or at least 2G
+swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM (some recommend 2x RAM if you have <=8GB).
+				#Otherwise, how much swap space (if any) is needed is debatable, rule of thumb I use is equal to square root of RAM (rounded up to whole GB)
 
 username="user"			#Desired username for regular (non-root) user of the Void installation you're making
 
@@ -47,7 +48,7 @@ void_repo="https://alpha.us.repo.voidlinux.org/"	#List of mirrors can be found h
 
 #Note that the script assumes nano is being installed, and sets it as the default editor for sudoers later in the script
 #Even if apparmor is removed here, it will still be added to the kernal command line arguments in the GRUB config performed further in the script
-apps="nano flatpak elogind dbus alsa-utils apparmor ufw gufw cronie ntp rclone RcloneBrowser firefox"
+apps="nano elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox"
 
 #elogind and acpid should not both be enabled. Same with dhcpcd and NetworkManager.
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "dhcpcd") 
@@ -65,7 +66,7 @@ declare apps_amd_cpu="linux-firmware-amd"
 declare apps_amd_gpu="linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu"
 declare apps_intel_gpu="linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel"
 declare apps_nvidia_gpu="nvidia"
-declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa kdeplasma-addons5 user-manager plasma-nm dolphin xdg-utils kscreen kwayland-integration xdg-desktop-portal-kde upower udisks2" #plasma-firewall GUI front end for ufw doesn't seem to be working as of April/21
+declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa kdeplasma-addons5 user-manager plasma-nm dolphin xdg-utils kscreen kwayland-integration xdg-desktop-portal-kde upower udisks2" #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
 declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4"
 
 ###############################################################################################################

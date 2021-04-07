@@ -10,7 +10,7 @@ root_part_size="15G"		#Size of the root partition. Required size depends on how 
 				#If you run this install script without modifying the apps to be installed (including KDE graphical DE), about 4-5G is used
 				#Arch wiki recommends 15-20G (as of 24-Mar-2021)
 				
-swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM (some recommend 2x RAM if you have <=8GB).
+swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM (some recommend 2x RAM if you have <8GB).
 				#Otherwise, how much swap space (if any) is needed is debatable, rule of thumb I use is equal to square root of RAM (rounded up to whole GB)
 
 username="user"			#Desired username for regular (non-root) user of the Void installation you're making

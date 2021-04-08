@@ -10,7 +10,7 @@ root_part_size="15G"		#Size of the root partition. Required size depends on how 
 				#If you run this install script without modifying the apps to be installed (including KDE graphical DE), about 4-5G is used
 				#Arch wiki recommends 15-20G (as of 24-Mar-2021)
 				
-swap_size="4G"			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM (some recommend 2x RAM if you have <8GB).
+swap_size=""			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM (some recommend 2x RAM if you have <8GB).
 				#Otherwise, how much swap space (if any) is needed is debatable, rule of thumb I use is equal to square root of RAM (rounded up to whole GB)
 
 username="user"			#Desired username for regular (non-root) user of the Void installation you're making
@@ -74,6 +74,13 @@ declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xf
 
 #END CPU/DRIVER/DE PACKAGES
 ###############################################################################################################
+
+#Check if user has filled out required field by seeing if swap_size (which is left blank by default) has a value entered
+#If not, exit script
+if [[ -z $swap_size ]]; then
+	echo -e "\nPlease fill in required fields and re-run script\n"
+	exit
+fi
 
 #Add CPU microcode, graphics drivers, and/or desktop environment packages to the list of packages to install
 case $vendor_cpu in
@@ -262,9 +269,11 @@ sed -i 's/^#*write-cache/write-cache/i' /mnt/etc/apparmor/parser.conf
 
 #Creates typical folders in user's home directory, sets ownership and permissions of the folders as well
 for dir in Desktop Documents Downloads Videos Pictures Music; do
-	chroot /mnt mkdir -p /home/$username/$dir
-	chroot /mnt chown $username:$username /home/$username/$dir
-	chroot /mnt chmod 700 /home/$username/$dir
+	if [[ ! -e /mnt/home/$username/$dir ]]; then
+		chroot /mnt mkdir -p /home/$username/$dir
+		chroot /mnt chown $username:$username /home/$username/$dir
+		chroot /mnt chmod 700 /home/$username/$dir
+	fi
 done
 
 #Includes the .bash_aliases file as part of .bashrc. This is a more modular way of adding aliases (which can also be added directly to .bashrc)

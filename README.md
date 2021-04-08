@@ -1,5 +1,5 @@
 # voidLuksSetup
-Bash script for installing Void Linux with disk encryption.
+Bash script for installing Void Linux with disk encryption. Also performs some post-install configuration, such as installing graphics drivers, a graphical DE, and other applications, enabling/disabling services, creating a non-root user, etc. The script is designed to be user-configurable, by modifying a number of text fields near the start of the script prior to execution.
 
 # References
 Much of what is done in this script came almost straight from the official [Void Documentation](https://docs.voidlinux.org/installation/guides/fde.html). I just adapted commands where necessary to make them script-able, as well as made a number of assumptions/personal choices as to what additional configuration/utilities should be added.

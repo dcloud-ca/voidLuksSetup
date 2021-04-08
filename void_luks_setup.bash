@@ -268,10 +268,12 @@ for service in ${en_services[@]}; do
 	fi
 done
 
-#Enable apparmor, set to "enforce" (alternatively can be "complain")
-sed -i 's/^#*APPARMOR=.*$/APPARMOR=enforce/i' /mnt/etc/default/apparmor
-#Enable apparmor profile caching, which speeds up boot
-sed -i 's/^#*write-cache/write-cache/i' /mnt/etc/apparmor/parser.conf
+if [[ $apps == *"apparmor"* ]]; then
+	#Enable apparmor, set to "enforce" (alternatively can be "complain")
+	sed -i 's/^#*APPARMOR=.*$/APPARMOR=enforce/i' /mnt/etc/default/apparmor
+	#Enable apparmor profile caching, which speeds up boot
+	sed -i 's/^#*write-cache/write-cache/i' /mnt/etc/apparmor/parser.conf
+fi
 
 #Creates typical folders in user's home directory, sets ownership and permissions of the folders as well
 for dir in Desktop Documents Downloads Videos Pictures Music; do
@@ -299,7 +301,7 @@ echo "alias xq='xbps-query'" >> /mnt/home/$username/.bash_aliases
 #If KDE is selected for install, the emptty console-based display manager will be installed (unless configured otherwise)
 #If so, set emptty to use the TTY that is one higher than the number that are configured to be enabled in /var/service/
 #By default, this script disables all TTYs except for TTY1, so set emptty to use TTY2.
-if [[ $graphical_de == "kde" ]]; then
+if [[ $apps == *"emptty"* ]]; then
 	tty=2
 	sed -i "s/^#*TTY_NUMBER=[0-9]*/TTY_NUMBER=$tty/i" /mnt/etc/emptty/conf
 	#Set default emptty login as the non-root user that was created

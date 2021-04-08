@@ -244,12 +244,16 @@ xbps-install -SyR $void_repo/current/$libc -r /mnt $apps
   
 #Disable services as selected above
 for service in ${rm_services[@]}; do
-	chroot /mnt rm /etc/runit/runsvdir/default/$service
+	if [[ -e /mnt/runit/runsvdir/default/$service ]]; then
+		chroot /mnt rm /etc/runit/runsvdir/default/$service
+	fi
 done
 #Enable services as selected above
 for service in ${en_services[@]}; do
-	chroot /mnt ln -s /etc/sv/$service /etc/runit/runsvdir/default/
-done 
+	if [[ ! -e /mnt/etc/runit/runsvdir/default/$service ]]; then
+		chroot /mnt ln -s /etc/sv/$service /etc/runit/runsvdir/default/
+	fi
+done
 
 #Enable apparmor, set to "enforce" (alternatively can be "complain")
 sed -i 's/^#*APPARMOR=.*$/APPARMOR=enforce/i' /mnt/etc/default/apparmor

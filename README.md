@@ -27,8 +27,7 @@ There are a number of other smaller assumptions made in various default values p
 7. Run: *chmod +x void_luks_setup.bash; sudo ./void_luks_setup.bash*
 9. When prompted, enter the desired passwords for LUKS encryption, root user, and non-root user
 10. When prompted, select the desired drive for installation
-11. Depending on what was previously on the installation drive, some warning(s) may be displayed about LUKS and/or filesystem headers being already present on the drive, this is not an issue.
+11. Depending on what was previously on the installation drive, some warning(s) may be displayed about LUKS and/or filesystem signatures being already present on the drive, this is not an issue.
 12. Wait for the installation to complete
-13. Near the end of the install script there may be some errors printed similar to: "cannot remove '[something]': No such file or directory". This is generally expected, as the script tries to disable a number of services, some of which may not have been enabled in the first place.
 14. Once the installation has completed, the user will be asked whether to automatically reboot.
 15. Installation is done!

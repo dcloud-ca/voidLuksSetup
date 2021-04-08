@@ -38,7 +38,7 @@ graphical_de="kde"		#"xfce" for an XFCE4 (xorg) install
                         	#Or "kde" for a KDE Plasma 5 (wayland) install. Somewhat reduced install compared to the full 'kde5' meta-package. Uses a console-based display manager (emptty) rather than SDDM (as this would require Xorg).
                         	#Or leave blank (just double quotes, "") to not install DE. Will skip graphics driver installation as well
 
-void_repo="https://alpha.us.repo.voidlinux.org/"	#List of mirrors can be found here: https://docs.voidlinux.org/xbps/repositories/mirrors/index.html
+void_repo="https://alpha.de.repo.voidlinux.org/"	#List of mirrors can be found here: https://docs.voidlinux.org/xbps/repositories/mirrors/index.html
 
 #END MANDATORY FIELDS
 ###############################################################################################################
@@ -244,7 +244,7 @@ xbps-install -SyR $void_repo/current/$libc -r /mnt $apps
   
 #Disable services as selected above
 for service in ${rm_services[@]}; do
-	if [[ -e /mnt/runit/runsvdir/default/$service ]]; then
+	if [[ -e /mnt/etc/runit/runsvdir/default/$service ]]; then
 		chroot /mnt rm /etc/runit/runsvdir/default/$service
 	fi
 done

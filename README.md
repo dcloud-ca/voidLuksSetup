@@ -30,4 +30,3 @@ There are a number of other smaller assumptions made in various default values p
 11. Depending on what was previously on the installation drive, some warning(s) may be displayed about LUKS and/or filesystem signatures being already present on the drive, this is not an issue.
 12. Wait for the installation to complete
 14. Once the installation has completed, the user will be asked whether to automatically reboot.
-15. Installation is done!

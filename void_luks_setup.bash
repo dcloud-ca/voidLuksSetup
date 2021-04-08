@@ -46,8 +46,7 @@ void_repo="https://alpha.de.repo.voidlinux.org/"	#List of mirrors can be found h
 #Lists of apps to install, services to enable/disable, and groups that the user should be made a part of, to be performed during the install
 #These can be edited prior to running the script, but you can also easily install (and uninstall) packages, and enable/disable services, once you're up and running.
 
-#Note that the script assumes nano is being installed, and sets it as the default editor for sudoers later in the script
-#Even if apparmor is removed here, it will still be added to the kernal command line arguments in the GRUB config performed further in the script
+#If apparmor is included here, the script will also add the apparmor security modules to the GRUB command line parameters
 apps="nano flatpak elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox xdg-desktop-portal xdg-user-dirs xdg-utils"
 
 #elogind and acpid should not both be enabled. Same with dhcpcd and NetworkManager.
@@ -210,9 +209,14 @@ echo -e "/dev/$hostname/home	/home	$fs_type	defaults	0	0" >> /mnt/etc/fstab
 echo -e "/dev/$hostname/swap	swap	swap	defaults	0	0" >> /mnt/etc/fstab
 echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
 
-#Modify GRUB config to allow for LUKS encryption. The two apparmor items enable the apparmor security module.
+#Modify GRUB config to allow for LUKS encryption. Also enables SSD discards if configured above.
+#If apparmor is being installed, enable the apparmor security module
+kernel_params="rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid $discards"
+if [[ $apps == *"apparmor"* ]]; then
+	kernel_params="$kernel_params apparmor=1 security=apparmor"
+fi
 echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
-sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"rd.lvm.vg=$hostname rd.luks.uuid=$luks_uuid $discards apparmor=1 security=apparmor /" /mnt/etc/default/grub
+sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"$kernel_params /" /mnt/etc/default/grub
 
 #To avoid having to enter the password twice on boot, a key will be configured to automatically unlock the encrypted volume on boot.
 #Generate keyfile
@@ -237,8 +241,10 @@ xbps-reconfigure -far /mnt/
 
 #Allow users in the wheel group to use sudo
 sed -i "s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/" /mnt/etc/sudoers
-#Change the default text editor from VI to nano for visudoand sudoedit)
-echo "Defaults editor=/usr/bin/nano" >> /mnt/etc/sudoers
+#Change the default text editor from VI to nano for visudo and sudoedit, if nano is installed
+if [[ $apps == *"nano"* ]]; then
+	echo "Defaults editor=/usr/bin/nano" >> /mnt/etc/sudoers
+fi
 
 #Ensure the xbps package manager in the chroot is up to date
 xbps-install -SuyR $void_repo/current/$libc -r /mnt xbps

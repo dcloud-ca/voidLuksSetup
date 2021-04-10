@@ -68,7 +68,8 @@ declare apps_amd_cpu="linux-firmware-amd"
 declare apps_amd_gpu="linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu"
 declare apps_intel_gpu="linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel"
 declare apps_nvidia_gpu="nvidia"
-declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa kdeplasma-addons5 user-manager plasma-wayland-protocols plasma-nm dolphin kscreen kwayland-integration xdg-desktop-portal-kde upower udisks2" #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
+declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa kdeplasma-addons5 user-manager plasma-wayland-protocols \
+plasma-nm dolphin kscreen kwayland-integration xdg-desktop-portal-kde kde-cli-tools upower udisks2" #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
 declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4 xdg-desktop-portal-gtk xdg-user-dirs-gtk"
 
 #END CPU/DRIVER/DE PACKAGES

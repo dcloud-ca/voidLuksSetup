@@ -13,7 +13,7 @@ A (non-exhaustive) list of the more fundatmental assumptions made by this script
 3. Assumes an EFI/GPT installation (I believe this should be compatible with the vast majority of systems that are less than ~10 years old)
 4. Assumes that the entire installation (boot loader, root, home) is on the same drive
 5. Assumes the installation will occupy the entire drive (the whole drive will be wiped pior to installation)
-6. The installation will use separate partitions (volumes) for swap and /home, in addition to the root partition (volume)
+6. The installation will use separate partitions (volumes) for swap and home, in addition to the root partition (volume)
 
 There are a number of other smaller assumptions made in various default values populated in the script, but for the most part these are meant to be easily changeable by the user by editing the fields located near the start of the script file.
 

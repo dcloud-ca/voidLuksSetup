@@ -69,7 +69,7 @@ declare apps_amd_cpu="linux-firmware-amd"
 declare apps_amd_gpu="linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu"
 declare apps_intel_gpu="linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel"
 declare apps_nvidia_gpu="nvidia"
-declare apps_kde="kde5 kde5baseapps kcron pulseaudio ark user-manager plasma-wayland-protocols xdg-desktop-portal-kde plasma-applet-active-window-control" #libreoffice-kde plasma-disks partitionmanager 
+declare apps_kde="kde5 kde5-baseapps kcron pulseaudio ark user-manager plasma-wayland-protocols xdg-desktop-portal-kde plasma-applet-active-window-control" #libreoffice-kde plasma-disks partitionmanager 
 #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
 declare apps_xfce="lightdm lightdm-gtk3-greeter xfce4 xdg-desktop-portal-gtk xdg-user-dirs-gtk"
 

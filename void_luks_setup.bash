@@ -6,9 +6,10 @@
 
 efi_part_size="260M"		#Minimum of 100M, Arch wiki recommends at least 260M (as of 24-Mar-2021)
 
-root_part_size="15G"		#Size of the root partition. Required size depends on how much software you ultimately install
+root_part_size="20G"		#Size of the root partition. Required size depends on how much software you ultimately install
 				#If you run this install script without modifying the apps to be installed (including KDE graphical DE), about 4-5G is used
 				#Arch wiki recommends 15-20G (as of 24-Mar-2021)
+				#Alternatively, leave blank to omit creating a separate home partition, and have root occupy the entire drive
 				
 swap_size=""			#If you want to use suspend-to-disk (AKA hibernate), should be >= amount of RAM (some recommend 2x RAM if you have <8GB).
 				#Otherwise, how much swap space (if any) is needed is debatable, rule of thumb I use is equal to square root of RAM (rounded up to whole GB)
@@ -47,8 +48,7 @@ void_repo="https://alpha.de.repo.voidlinux.org/"	#List of mirrors can be found h
 #These can be edited prior to running the script, but you can also easily install (and uninstall) packages, and enable/disable services, once you're up and running.
 
 #If apparmor is included here, the script will also add the apparmor security modules to the GRUB command line parameters
-apps="nano flatpak elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox xdg-desktop-portal xdg-user-dirs xdg-utils xdgmenumaker rclone RcloneBrowser \
-chromium libreoffice-calc libreoffice-writer"
+apps="xorg-minimal xorg-fonts nano elogind dbus apparmor ufw cronie ntp firefox xdg-desktop-portal xdg-user-dirs xdg-utils" #flatpak alsa-utils gufw rclone RcloneBrowser chromium libreoffice-calc libreoffice-writer
 
 #elogind and acpid should not both be enabled. Same with dhcpcd and NetworkManager.
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "dhcpcd") 
@@ -69,10 +69,9 @@ declare apps_amd_cpu="linux-firmware-amd"
 declare apps_amd_gpu="linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-radeon mesa-vaapi mesa-vdpau xf86-video-amdgpu"
 declare apps_intel_gpu="linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel"
 declare apps_nvidia_gpu="nvidia"
-declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa kdeplasma-addons5 user-manager plasma-wayland-protocols \
-plasma-nm dolphin kscreen kwayland-integration xdg-desktop-portal-kde kde-cli-tools kdesu upower udisks2 libqtxdg plasma-disks partitionmanager \
-kate5 libreoffice-kde kwrited kwallet-pam kinfocenter kgamma5 plasma-applet-active-window-control frameworkintegration kcmutils" #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
-declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4 xdg-desktop-portal-gtk xdg-user-dirs-gtk"
+declare apps_kde="kde5 kde5baseapps kcron pulseaudio ark user-manager plasma-wayland-protocols xdg-desktop-portal-kde plasma-applet-active-window-control" #libreoffice-kde plasma-disks partitionmanager 
+#plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
+declare apps_xfce="lightdm lightdm-gtk3-greeter xfce4 xdg-desktop-portal-gtk xdg-user-dirs-gtk"
 
 #END CPU/DRIVER/DE PACKAGES
 ###############################################################################################################
@@ -151,13 +150,20 @@ echo $luks_pw | cryptsetup -q luksFormat --type luks1 $luks_part
 echo $luks_pw | cryptsetup luksOpen $luks_part $hostname
 
 #Create volume group in encrypted partition, and create root, swap and home volumes
+#If the value for root parition size was left blank, don't create a home volume and instead allocat the rest of the disk to root
 vgcreate $hostname /dev/mapper/$hostname
-lvcreate --name root -L $root_part_size $hostname
 lvcreate --name swap -L $swap_size $hostname
-lvcreate --name home -l 100%FREE $hostname
+if [[ -z $root_part_size ]]; then
+	lvcreate --name root -l 100%FREE $hostname
+elif [[ ! -z $root_part_size ]]; then
+	lvcreate --name root -L $root_part_size $hostname
+	lvcreate --name home -l 100%FREE $hostname
+fi	
 #Create swap, root, and home filesystems, with the filesystem for home and root as selected above
 mkfs.$fs_type -qL root /dev/$hostname/root
-mkfs.$fs_type -qL home /dev/$hostname/home
+if [[ ! -z $root_part_size ]]; then
+	mkfs.$fs_type -qL home /dev/$hostname/home
+fi
 mkswap /dev/$hostname/swap
 
 #Mount newly created filesystems, and create/mount virtual filesystem location under the root directory
@@ -167,8 +173,10 @@ for dir in dev proc sys run; do
 	mount --rbind /$dir /mnt/$dir
 	mount --make-rslave /mnt/$dir
 done
-mkdir -p /mnt/home
-mount /dev/$hostname/home /mnt/home
+if [[ ! -z $root_part_size ]]; then
+	mkdir -p /mnt/home
+	mount /dev/$hostname/home /mnt/home
+fi
 
 #Create/mount EFI system partition filesystem
 mkfs.vfat $efi_part
@@ -208,7 +216,9 @@ fi
 
 #Add lines to fstab, which determines which partitions/volumes are mounted at boot
 echo -e "/dev/$hostname/root	/	$fs_type	defaults	0	0" >> /mnt/etc/fstab
-echo -e "/dev/$hostname/home	/home	$fs_type	defaults	0	0" >> /mnt/etc/fstab
+if [[ ! -z $root_part_size ]]; then
+	echo -e "/dev/$hostname/home	/home	$fs_type	defaults	0	0" >> /mnt/etc/fstab
+fi
 echo -e "/dev/$hostname/swap	swap	swap	defaults	0	0" >> /mnt/etc/fstab
 echo -e "$efi_part	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
 
@@ -302,17 +312,17 @@ echo "alias xs='xbps-query -Rs'" >> /mnt/home/$username/.bash_aliases
 echo "alias xr='sudo xbps-remove -oOR'" >> /mnt/home/$username/.bash_aliases 
 echo "alias xq='xbps-query'" >> /mnt/home/$username/.bash_aliases 
 
-#If KDE is selected for install, the emptty console-based display manager will be installed (unless configured otherwise)
+#Script updatd to use SDDM for a KDE install rather than emptty, emptty config below disabled
 #If so, set emptty to use the TTY that is one higher than the number that are configured to be enabled in /var/service/
 #By default, this script disables all TTYs except for TTY1, so set emptty to use TTY2.
-num_tty=2
-if [[ $apps == *"emptty"* ]]; then
-	sed -i "s/^#*TTY_NUMBER=[0-9]*/TTY_NUMBER=$num_tty/i" /mnt/etc/emptty/conf
-	#Set default emptty login as the non-root user that was created
-	sed -i "s/^#*DEFAULT_USER=/DEFAULT_USER=$user_name/i" /mnt/etc/emptty/conf
-	#Lists available desktop environments/sessions vertically, rather than all in one row
-	sed -i "s/^#*VERTICAL_SELECTION=.*$/VERTICAL_SELECTION=true/i" /mnt/etc/emptty/conf
-fi
+num_tty=1
+#if [[ $apps == *"emptty"* ]]; then
+#	sed -i "s/^#*TTY_NUMBER=[0-9]*/TTY_NUMBER=$num_tty/i" /mnt/etc/emptty/conf
+#	#Set default emptty login as the non-root user that was created
+#	sed -i "s/^#*DEFAULT_USER=/DEFAULT_USER=$user_name/i" /mnt/etc/emptty/conf
+#	#Lists available desktop environments/sessions vertically, rather than all in one row
+#	sed -i "s/^#*VERTICAL_SELECTION=.*$/VERTICAL_SELECTION=true/i" /mnt/etc/emptty/conf
+#fi
 
 #Enable numlock on startup for TTY range specified.
 #By default this install script will result in two TTYs being used (one for regular login shell, another for emptty)

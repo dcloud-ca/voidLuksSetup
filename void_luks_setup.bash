@@ -47,15 +47,16 @@ void_repo="https://alpha.de.repo.voidlinux.org/"	#List of mirrors can be found h
 #These can be edited prior to running the script, but you can also easily install (and uninstall) packages, and enable/disable services, once you're up and running.
 
 #If apparmor is included here, the script will also add the apparmor security modules to the GRUB command line parameters
-apps="nano flatpak elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox xdg-desktop-portal xdg-user-dirs xdg-utils"
+apps="nano flatpak elogind dbus alsa-utils apparmor ufw gufw cronie ntp firefox xdg-desktop-portal xdg-user-dirs xdg-utils xdgmenumaker rclone RcloneBrowser \
+chromium libreoffice-calc libreoffice-writer"
 
 #elogind and acpid should not both be enabled. Same with dhcpcd and NetworkManager.
 rm_services=("agetty-tty2" "agetty-tty3" "agetty-tty4" "agetty-tty5" "agetty-tty6" "mdadm" "sshd" "acpid" "dhcpcd") 
-en_services=("dbus" "elogind" "NetworkManager" "ufw" "cronie" "ntpd")
+en_services=("dbus" "elogind" "NetworkManager" "ufw" "cronie" "ntpd" "udevd" "uuidd")
 	
 #Being part of the wheel group allows use of sudo so you'll be able to add yourself to more groups in the future without having to login as root
 #Some additional groups you may way to add to the above list (separate with commas, no spaces): floppy,cdrom,optical,audio,video,kvm,xbuilder
-user_groups="wheel"
+user_groups="wheel,floppy,cdrom,optical,audio,video,kvm,xbuilder"
 
 #END APP/SERVICE SELECTION
 ###############################################################################################################
@@ -69,7 +70,8 @@ declare apps_amd_gpu="linux-firmware-amd mesa-dri vulkan-loader mesa-vulkan-rade
 declare apps_intel_gpu="linux-firmware-intel mesa-dri mesa-vulkan-intel intel-video-accel xf86-video-intel"
 declare apps_nvidia_gpu="nvidia"
 declare apps_kde="emptty plasma-desktop konsole kcron pulseaudio ark plasma-pa kdeplasma-addons5 user-manager plasma-wayland-protocols \
-plasma-nm dolphin kscreen kwayland-integration xdg-desktop-portal-kde kde-cli-tools kdesu upower udisks2" #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
+plasma-nm dolphin kscreen kwayland-integration xdg-desktop-portal-kde kde-cli-tools kdesu upower udisks2 libqtxdg plasma-disks partitionmanager \
+kate5 libreoffice-kde kwrited kwallet-pam kinfocenter kgamma5 plasma-applet-active-window-control frameworkintegration kcmutils" #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
 declare apps_xfce="xorg-minimal xorg-fonts xterm lightdm lightdm-gtk3-greeter xfce4 xdg-desktop-portal-gtk xdg-user-dirs-gtk"
 
 #END CPU/DRIVER/DE PACKAGES
@@ -270,8 +272,8 @@ for service in ${en_services[@]}; do
 done
 
 if [[ $apps == *"apparmor"* ]]; then
-	#Enable apparmor, set to "enforce" (alternatively can be "complain")
-	sed -i 's/^#*APPARMOR=.*$/APPARMOR=enforce/i' /mnt/etc/default/apparmor
+	#Enable apparmor, set to "complain" (alternatively can be "enforce")
+	sed -i 's/^#*APPARMOR=.*$/APPARMOR=complain/i' /mnt/etc/default/apparmor
 	#Enable apparmor profile caching, which speeds up boot
 	sed -i 's/^#*write-cache/write-cache/i' /mnt/etc/apparmor/parser.conf
 fi
@@ -303,9 +305,9 @@ echo "alias xq='xbps-query'" >> /mnt/home/$username/.bash_aliases
 #If KDE is selected for install, the emptty console-based display manager will be installed (unless configured otherwise)
 #If so, set emptty to use the TTY that is one higher than the number that are configured to be enabled in /var/service/
 #By default, this script disables all TTYs except for TTY1, so set emptty to use TTY2.
+num_tty=2
 if [[ $apps == *"emptty"* ]]; then
-	tty=2
-	sed -i "s/^#*TTY_NUMBER=[0-9]*/TTY_NUMBER=$tty/i" /mnt/etc/emptty/conf
+	sed -i "s/^#*TTY_NUMBER=[0-9]*/TTY_NUMBER=$num_tty/i" /mnt/etc/emptty/conf
 	#Set default emptty login as the non-root user that was created
 	sed -i "s/^#*DEFAULT_USER=/DEFAULT_USER=$user_name/i" /mnt/etc/emptty/conf
 	#Lists available desktop environments/sessions vertically, rather than all in one row
@@ -314,10 +316,10 @@ fi
 
 #Enable numlock on startup for TTY range specified.
 #By default this install script will result in two TTYs being used (one for regular login shell, another for emptty)
-echo 'INITTY=/dev/tty[1-2]
-for tty in $INITTY; do
-	setleds -D +num < $tty
-done' >> /mnt/etc/rc.conf
+echo "INITTY=/dev/tty[1-$num_tty]
+for tty in \$INITTY; do
+	setleds -D +num < \$tty
+done" >> /mnt/etc/rc.conf
 
 #Change the void repository mirror to be used by the package manager
 chroot /mnt mkdir -p /etc/xbps.d

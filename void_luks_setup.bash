@@ -108,7 +108,7 @@ fi
 case $graphical_de in
     "kde")
         apps="$apps $apps_kde"
-	en_services+=("emptty")
+	en_services+=("sddm")
         ;;
     "xfce")
         apps="$apps $apps_xfce"

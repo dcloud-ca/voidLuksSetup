@@ -3,7 +3,7 @@ Bash script for installing Void Linux with disk encryption. Also performs some p
 
 # 🚨 Project not receiving maintenance
 
-I no longer run Void, and have not worked on this script for some time. It may be out of date.
+I no longer run Void, and have not worked on this script for some time. It may be out of date and/or have unaddressed issues.
 
 # References
 Much of what is done in this script came almost straight from the official [Void Documentation](https://docs.voidlinux.org/installation/guides/fde.html). I just adapted commands where necessary to make them script-able, as well as made a number of assumptions/personal choices as to what additional configuration/utilities should be added.

@@ -71,8 +71,8 @@ declare apps_intel_gpu="linux-firmware-intel mesa-dri mesa-vulkan-intel intel-vi
 declare apps_nvidia_gpu="nvidia"
 declare apps_kde="kde5 kde5-baseapps kcron pulseaudio ark user-manager plasma-wayland-protocols xdg-desktop-portal-kde plasma-applet-active-window-control" #libreoffice-kde plasma-disks partitionmanager 
 #plasma-firewall GUI front end for ufw doesn't seem to work properly as of April/21
-declare apps_xfce="lightdm lightdm-gtk3-greeter xfce4 xdg-desktop-portal-gtk xdg-user-dirs-gtk"
-
+declare apps_xfce="lightdm-gtk3-greeter xfce4 xdg-desktop-portal-gtk xdg-user-dirs-gtk"
+declare apps_ob="openbox obconf obmenu-generator tint2 lxappearance alsa-utils lightdm-gtk3-greeter xdg-desktop-portal-gtk xdg-user-dirs-gtk"
 #END CPU/DRIVER/DE PACKAGES
 ###############################################################################################################
 
@@ -114,6 +114,10 @@ case $graphical_de in
         apps="$apps $apps_xfce"
 	en_services+=("lightdm")
         ;;
+    "ob")
+        apps="$apps $apps_ob"
+        en_services+=("lightdm")
+        ;;	
 esac
 
 #Read passwords for root user, non-root user, and LUKS encryption from user input
